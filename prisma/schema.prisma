@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator docs {
+  provider = "node node_modules/prisma-docs-generator"
+  output   = "../docs"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String
+  birthday  DateTime
+  password  String
+  address   String?
+  token     String?   @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String
+  industry  String
+  note      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+enum TaxType {
+  NONE
+  INCLUDE
+  EXCLUDE
+}
+
+enum DiscountType {
+  AMOUNT
+  PERCENT
+}
+
+model SalesHeader {
+  id           Int       @id @default(autoincrement())
+  date         DateTime
+  customerId   Int
+  customerName String
+  taxType      TaxType   @default(NONE)
+  taxPercent   Float     @default(0)
+  total        Float     @default(0)
+  grandTotal   Float     @default(0)
+  note         String?
+  extraField   String?
+  extraField2  String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime?
+}
+
+model SalesDetail {
+  id            Int          @id @default(autoincrement())
+  salesId       Int
+  itemId        Int
+  itemName      String
+  itemThumbnail String?
+  quantity      Int
+  unitName      String
+  price         Float
+  discountType  DiscountType @default(AMOUNT)
+  discount      Float
+  total         Float
+  grandTotal    Float
+  note          String?
+  extraField    String?
+  extraField2   String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime?
+}
+
+model Item {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String
+  price     Float
+  category  String
+  note      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
